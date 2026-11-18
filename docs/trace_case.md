@@ -6,9 +6,9 @@
 |---|---|
 | Shape lỗi | `seeded_regression` |
 | Claim và seed | `C-014@11` |
-| Run chứa trial | `E-seeded_regression-20261118-cf4c` |
+| Run chứa trial | `E-seeded_regression-20261118-a2da` |
 | Shape đối chứng | `fixed` |
-| Run đối chứng | `E-fixed-20261118-cf4c` |
+| Run đối chứng | `E-fixed-20261118-a2da` |
 | Kết quả shape lỗi | FAIL — `proposal_mismatch` |
 | Kết quả shape fixed | PASS — `ok` |
 | Failure mode | FM-05 `pre_deducted`, FM-08 `misreport` |

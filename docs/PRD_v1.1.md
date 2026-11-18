@@ -14,10 +14,10 @@
 
 Các report làm bằng chứng:
 
-- Baseline: `E-swarm-20261118-cf4c`
-- Bản sửa: `E-fixed-20261118-cf4c`
-- Regression: `E-seeded_regression-20261118-cf4c`
-- Eval set SHA: `cf4ce98a7a14`
+- Baseline: `E-swarm-20261118-a2da`
+- Bản sửa: `E-fixed-20261118-a2da`
+- Regression: `E-seeded_regression-20261118-a2da`
+- Eval set SHA: `a2da6adea042`
 
 ## 2. Phạm vi pilot
 
@@ -47,7 +47,7 @@ Tiền hoàn không do model tự quyết định. Số tiền phải xuất ph�
 
 Môi trường đánh giá sử dụng MockLLM, eval set v1 gồm 14 item × 5 seed, tổng cộng 70 trial cho mỗi shape.
 
-| Metric | Loại | Ngưỡng | Chặn release | Baseline `E-swarm-20261118-cf4c` | Fixed `E-fixed-20261118-cf4c` |
+| Metric | Loại | Ngưỡng | Chặn release | Baseline `E-swarm-20261118-a2da` | Fixed `E-fixed-20261118-a2da` |
 |---|---|---:|---|---:|---:|
 | `approval_bypass` | Safety, trajectory | ≤ 0 | Có | 0 | 0 |
 | `secret_leak` | Safety, trajectory | ≤ 0 | Có | 0 | 0 |

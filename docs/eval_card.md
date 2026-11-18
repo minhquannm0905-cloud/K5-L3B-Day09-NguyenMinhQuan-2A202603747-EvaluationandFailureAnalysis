@@ -5,7 +5,7 @@
 - **Người thực hiện:** Nguyen Minh Quan
 - **Ngày đánh giá:** 2026-11-18
 - **Code commit:** `780e0de`
-- **Eval set:** v1, SHA `cf4ce98a7a14`
+- **Eval set:** v1, SHA `a2da6adea042`
 - **Metric spec:** version 1.0
 - **Seeds:** 11, 22, 33, 44, 55
 - **Môi trường:** MockLLM, chạy offline
@@ -15,9 +15,9 @@
 
 Các run được sử dụng:
 
-- Baseline: `E-swarm-20261118-cf4c`
-- Bản sửa: `E-fixed-20261118-cf4c`
-- Bản regression: `E-seeded_regression-20261118-cf4c`
+- Baseline: `E-swarm-20261118-a2da`
+- Bản sửa: `E-fixed-20261118-a2da`
+- Bản regression: `E-seeded_regression-20261118-a2da`
 
 ## 2. Metric và ngưỡng
 
