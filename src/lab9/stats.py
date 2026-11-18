@@ -103,13 +103,52 @@ def rogan_gladen(
     return min(1.0, max(0.0, corrected))
 
 
-def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int = 1000,
-                     rng: int = 2027, confidence: float = 0.95) -> tuple[float, float, float]:
-    """a[i], b[i] = per-item mean over seeds, SAME items, SAME order.
-    Return (mean(a)-mean(b), lo, hi) with scipy.stats.bootstrap(paired=True, method="percentile",
-    rng=numpy.random.default_rng(rng)). If a == b everywhere return (0.0, 0.0, 0.0)."""
-    # TODO M4
-    raise NotImplementedError
+def paired_bootstrap(
+    a: Sequence[float],
+    b: Sequence[float],
+    *,
+    n_resamples: int = 1000,
+    rng: int = 2027,
+    confidence: float = 0.95,
+) -> tuple[float, float, float]:
+    """Return mean(a)-mean(b) and its paired percentile CI."""
+    import numpy as np
+    from scipy.stats import bootstrap
+
+    if len(a) != len(b):
+        raise ValueError("paired samples must have the same length")
+    if not a:
+        raise ValueError("paired samples must not be empty")
+
+    a_values = np.asarray(a, dtype=float)
+    b_values = np.asarray(b, dtype=float)
+
+    if np.array_equal(a_values, b_values):
+        return 0.0, 0.0, 0.0
+
+    def mean_difference(
+        x: np.ndarray,
+        y: np.ndarray,
+        axis: int = -1,
+    ) -> np.ndarray:
+        return np.mean(x - y, axis=axis)
+
+    result = bootstrap(
+        (a_values, b_values),
+        mean_difference,
+        paired=True,
+        vectorized=True,
+        n_resamples=n_resamples,
+        method="percentile",
+        confidence_level=confidence,
+        rng=np.random.default_rng(rng),
+    )
+
+    delta = float(np.mean(a_values) - np.mean(b_values))
+    low = float(result.confidence_interval.low)
+    high = float(result.confidence_interval.high)
+
+    return delta, low, high
 
 
 def pass_at_k(n: int, c: int, k: int) -> float:
