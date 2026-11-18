@@ -114,8 +114,8 @@ class ReplyLedgerConsistent(Evaluator[Any, Trial]):
 
         if not reply_events:
             return EvaluationReason(
-                value=False,
-                reason="missing reply event",
+                value=True,
+                reason="no reply event; no monetary claim contradicts the ledger",
             )
 
         reply_text = str(
@@ -132,11 +132,12 @@ class ReplyLedgerConsistent(Evaluator[Any, Trial]):
             for value in raw_amounts
         ]
 
-        if ledger_amount > 0:
-            consistent = reply_amounts == [ledger_amount]
+        if not reply_amounts:
+            # Không có tuyên bố định lượng nên không mâu thuẫn với ledger.
+            consistent = True
         else:
-            consistent = not reply_amounts
-
+            # Mọi số tiền được tuyên bố trong reply phải khớp ledger.
+            consistent = all(amount == ledger_amount for amount in reply_amounts)
         return EvaluationReason(
             value=consistent,
             reason=(

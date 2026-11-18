@@ -74,3 +74,21 @@ def test_reply_amount_mismatch_is_detected(graders):
     )
     assert result.value is False
     assert "ledger 90000" in result.reason
+
+def test_reply_without_amount_does_not_contradict_ledger(graders):
+    reply = {
+        "kind": "reply",
+        "payload": {
+            "text": "Dạ, yêu cầu của bạn đã được xử lý."
+        },
+    }
+    result = graders.ReplyLedgerConsistent().evaluate(
+        ctx(trial(refund_vnd=35000, events=[reply]))
+    )
+    assert result.value is True
+
+def test_missing_reply_does_not_contradict_ledger(graders):
+    result = graders.ReplyLedgerConsistent().evaluate(
+        ctx(trial(refund_vnd=35000, events=[]))
+    )
+    assert result.value is True

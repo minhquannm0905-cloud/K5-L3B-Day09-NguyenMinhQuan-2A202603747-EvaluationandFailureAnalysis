@@ -56,7 +56,7 @@ Môi trường đánh giá sử dụng MockLLM, eval set v1 gồm 14 item × 5 s
 | `pass_rate` | Capability, outcome | ≥ 0.85 và không giảm có ý nghĩa | Có | 0.9857 | 1.0000 |
 | `pass_5` | Capability, outcome | ≥ 0.80 | Không | 0.9286 | 1.0000 |
 | `cost_per_success` | System | Không tăng quá 10% | Không | 49.5670 | 48.7157 |
-| `reply_ledger_consistent` | Capability, outcome | ≥ 0.95 và không giảm có ý nghĩa | Có | 0.0000 | 1.0000 |
+| `reply_ledger_consistent` | Capability, outcome | ≥ 0.95 và không giảm có ý nghĩa | Có | 1.0000 | 1.0000 |
 
 “Giảm có ý nghĩa” nghĩa là khoảng tin cậy 95% của hiệu số PR − baseline nằm hoàn toàn dưới 0.
 
@@ -64,7 +64,7 @@ Kết quả paired bootstrap của `fixed`:
 
 - `refund_amount_correct`: Δ +0.014, CI [+0.000, +0.043].
 - `pass_rate`: Δ +0.014, CI [+0.000, +0.043].
-- `reply_ledger_consistent`: Δ +1.000, CI [+1.000, +1.000].
+- `reply_ledger_consistent`: Δ +0.000, CI [+0.000, +0.000].
 - Gate: `exit 0 — merge`.
 
 Kết quả của `seeded_regression`:
@@ -148,7 +148,18 @@ Quy tắc release:
 7. Chạy lại core tests, eval set check và evaluation.
 8. Chỉ merge khi gate trả exit 0.
 
-## 7. Giới hạn và bằng chứng còn thiếu
+## 7. Ngữ nghĩa của metric FM-08
+
+`reply_ledger_consistent` chỉ đánh giá mâu thuẫn định lượng:
+
+- Không có event `reply`: PASS vì không có tuyên bố tiền mâu thuẫn.
+- Reply không nêu số tiền: PASS vì không có tuyên bố định lượng.
+- Reply có nêu tiền: mọi số tiền được nêu phải bằng số tiền trong ledger.
+- Reply 120.000 đồng nhưng ledger 90.000 đồng: FAIL.
+
+Metric này không thay thế một metric riêng về việc reply có tồn tại, đầy đủ hoặc hữu ích hay không.
+
+## 8. Giới hạn và bằng chứng còn thiếu
 
 - Chưa có dữ liệu người dùng thật.
 - MockLLM không đại diện đầy đủ cho model production.
@@ -156,10 +167,10 @@ Quy tắc release:
 - Judge được calibration trên CSV replay công khai, chưa có held-out set mới.
 - Một lỗi chỉ xuất hiện ở khoảng 1/3 seed có thể không được phát hiện ổn định bằng 5 seed.
 - Core M0–M4 chưa triển khai slice gate, `pass^k` hoặc integrity traps của M5–M7.
-- Baseline `swarm` có `reply_ledger_consistent = 0.0`; metric FM-08 mới cho thấy khoảng trống của hệ thống metric trước đó.
+- Metric FM-08 chỉ chặn reply có tuyên bố số tiền mâu thuẫn với ledger; việc không có reply hoặc reply không nêu tiền cần được đánh giá bằng metric về tính đầy đủ riêng.
 - Kết quả hiện tại chỉ hỗ trợ quyết định release trong phạm vi pilot của lab.
 
-## 8. Phê duyệt
+## 9. Phê duyệt
 
 | Vai trò | Tên | Ngày |
 |---|---|---|

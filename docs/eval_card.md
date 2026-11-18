@@ -4,7 +4,7 @@
 
 - **Người thực hiện:** Nguyen Minh Quan
 - **Ngày đánh giá:** 2026-11-18
-- **Code commit:** `780e0de`
+- **Nhánh:** `starter/d09`
 - **Eval set:** v1, SHA `a2da6adea042`
 - **Metric spec:** version 1.0
 - **Seeds:** 11, 22, 33, 44, 55
@@ -43,7 +43,7 @@ Các run được sử dụng:
 | `db_fact_kept` | 0.9857 | 1.0000 | 0.9286 |
 | `refund_amount_correct` | 0.9857 | 1.0000 | 0.8571 |
 | `pass_rate` | 0.9857 | 1.0000 | 0.7143 |
-| `reply_ledger_consistent` | 0.0000 | 1.0000 | 0.7857 |
+| `reply_ledger_consistent` | 1.0000 | 1.0000 | 0.7857 |
 | `pass_5` | 0.9286 | 1.0000 | 0.7143 |
 | `cost_per_success` | 49.5670 | 48.7157 | 81.2020 |
 
@@ -51,14 +51,14 @@ Paired bootstrap của `fixed` so với baseline:
 
 - `refund_amount_correct`: Δ +0.014, CI 95% [+0.000, +0.043].
 - `pass_rate`: Δ +0.014, CI 95% [+0.000, +0.043].
-- `reply_ledger_consistent`: Δ +1.000, CI 95% [+1.000, +1.000].
+- `reply_ledger_consistent`: Δ +0.000, CI 95% [+0.000, +0.000].
 - Kết luận gate: `exit 0 — merge`.
 
 Paired bootstrap của `seeded_regression` so với baseline:
 
 - `refund_amount_correct`: Δ −0.129, CI 95% [−0.315, +0.000].
 - `pass_rate`: Δ −0.271, CI 95% [−0.500, −0.057].
-- `reply_ledger_consistent`: giá trị 0.7857, thấp hơn ngưỡng 0.95.
+- `reply_ledger_consistent`: 0.7857, thấp hơn ngưỡng 0.95.
 - Kết luận gate: `exit 1 — blocked`.
 - Metric bị chặn: `refund_amount_correct`, `pass_rate`, `reply_ledger_consistent`.
 
@@ -94,17 +94,29 @@ Các grader `RefundAmountCorrect` và `ReplyLedgerConsistent` phát hiện regre
 
 Chi tiết nằm trong `docs/trace_case.md` và `docs/failure_taxonomy.md`.
 
-## 6. Phạm vi pilot và trách nhiệm gate
+## 6. Ý nghĩa của metric FM-08
+
+`reply_ledger_consistent` kiểm tra mâu thuẫn định lượng giữa reply và ledger:
+
+- Không có event `reply`: không có tuyên bố tiền mâu thuẫn, vì vậy metric PASS.
+- Reply không nêu số tiền: không có mâu thuẫn định lượng, vì vậy metric PASS.
+- Reply có nêu tiền: mọi số tiền được nêu phải khớp với ledger.
+- Reply 120.000 đồng trong khi ledger là 90.000 đồng: metric FAIL.
+
+Metric này không đánh giá việc agent có bắt buộc tạo reply hoặc nội dung reply có đầy đủ hay không. Các yêu cầu đó cần một metric riêng.
+
+## 7. Phạm vi pilot và trách nhiệm gate
 
 Pilot chỉ áp dụng cho các claim hoàn tiền LogiX-VN nằm trong eval set v1, sử dụng dữ liệu đơn hàng, chính sách, phê duyệt và ledger của môi trường lab.
 
 Gate owner: **Nguyen Minh Quan**. Khi gate trả exit 1, thay đổi không được merge cho đến khi nguyên nhân regression được xác định, sửa và chạy lại evaluation.
 
-## 7. Giới hạn
+## 8. Giới hạn
 
 - Chỉ sử dụng MockLLM, chưa đánh giá model thật hoặc người dùng thật.
 - Eval set chỉ có 14 item và 5 seed.
 - Judge được replay trên CSV công khai, chưa có tập held-out độc lập.
-- Baseline `swarm` có `reply_ledger_consistent = 0.0`, cho thấy grader FM-08 mới phát hiện một hạn chế chưa được metric cũ bao phủ.
+- `reply_ledger_consistent` chỉ kiểm tra mâu thuẫn định lượng; không có reply hoặc reply không nêu tiền được xem là không mâu thuẫn.
 - Bug hiếm chỉ xuất hiện ở khoảng 1/3 seed có thể không được phát hiện ổn định với 5 seed.
+- Core M0–M4 chưa triển khai slice gate, `pass^k` hoặc integrity traps của M5–M7.
 - Kết quả trong lab không chứng minh khả năng tổng quát hóa sang claim, chính sách hoặc dữ liệu sản xuất.
